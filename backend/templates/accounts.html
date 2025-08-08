@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ network.name }} — Accounts</title>
+    <style>
+        body { font-family: sans-serif; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        tr.blacklisted { background-color: #fdd; }
+    </style>
+</head>
+<body>
+    <h1>Accounts for {{ network.name }}</h1>
+    <br>
+    <center>
+        <form method="post" action="/app/parser/sync_posts/{{ network.id }}">
+            <button type="submit">Manual sync all posts on all accounts</button>
+        </form>
+    </center>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>Followers</th>
+                <th>Avg Score</th>
+                <th>Blacklisted</th>
+                <th>Posts Count</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in accounts %}
+            <tr class="{{ 'blacklisted' if item.account.blacklisted else '' }}">
+                <td><a href="{{ item.account.url }}" target="_blank">{{ item.account.url }}</a></td>
+                <td>{{ item.account.followers }}</td>
+                <td>{{ '%.4f' % item.score }}</td>
+                <td>{{ item.account.blacklisted }}</td>
+                <td>{{ item.posts|length }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
