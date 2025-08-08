@@ -12,7 +12,7 @@ Multi-network social media parser and analyzer with a FastAPI backend and Postgr
 - Centralized storage of posts and accounts in PostgreSQL.
 - Centralized logging and metrics.
 - Account ingestion via Telegram bot (https://github.com/sapogov1978/Links-Collection-Telegram-Bot).
-- Synchronization and account import from Google Sheets.
+- Import of accounts list from Google Sheets.
 
 ---
 
@@ -32,7 +32,7 @@ Multi-network social media parser and analyzer with a FastAPI backend and Postgr
 
 - Example `.gitignore` entries:
 ```
-backend/config/google/\*.json
+backend/config/google/*.json
 .env
 .secret
 ```
@@ -43,8 +43,8 @@ backend/config/google/\*.json
 
 - Clone the repository:
 ```
-git clone https://github.com/sapogov1978/SM\_parser\_n\_analyzer.git
-cd SM\_parser\_n\_analyzer
+git clone https://github.com/sapogov1978/SM_parser_n_analyzer.git
+cd SM_parser_n_analyzer
 ```
 
 - Start:
