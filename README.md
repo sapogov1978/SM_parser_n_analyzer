@@ -24,16 +24,16 @@ Multi-network social media parser and analyzer with a FastAPI backend and Postgr
 - **Never** store secrets (Google credentials, tokens, keys) in the repository. Add them to `.gitignore` and use environment variables.
 
 - Example `.gitignore` entries:
-'''gitignore
+```gitignore
 backend/config/google/\*.json
 .env
-.secret'''
+.secret```
 ---
 
 ## Running
 - Clone the repository:
-'''git clone https://github.com/sapogov1978/SM\_parser\_n\_analyzer.git
-cd SM\_parser\_n\_analyzer'''
+```git clone https://github.com/sapogov1978/SM\_parser\_n\_analyzer.git
+cd SM\_parser\_n\_analyzer```
 - Start:
     - `start.bat` (Windows)
     - `docker-compose up -d --build` (Linux)
