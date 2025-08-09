@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Networks</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+<h2>Networks</h2>
+
+<div class="cards">
+    {% for net in networks if net.name != "other" %}
+        <div class="card" onclick="window.location.href='/networks/network/{{ net.id }}'">
+            <div class="actions" onclick="event.stopPropagation()">
+                <details>
+                    <summary title="Actions">⋮</summary>
+                    <div class="dropdown">
+                        <a href="/networks/edit_network/{{ net.id }}">Edit</a>
+                        <a href="/networks/remove_network/{{ net.id }}" style="color:#888;">Delete</a>
+                    </div>
+                </details>
+            </div>
+
+            {% if net.logo %}
+                <img src="{{ net.logo }}" class="logo" alt="{{ net.name }}">
+            {% else %}
+                <div style="font-size: 30px;">🌐</div>
+            {% endif %}
+
+            <h3>{{ net.name }}</h3>
+            <div class="stats">
+                Accounts: {{ net.accounts_count }}<br>
+                Posts: {{ net.posts_count }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<hr>
+
+<div class="cards">
+    {% for net in networks if net.name == "other" %}
+        <div class="card" onclick="window.location.href='/networks/network/{{ net.id }}'">
+            <div class="actions" onclick="event.stopPropagation()">
+                <details>
+                    <summary title="Actions">⋮</summary>
+                    <div class="dropdown">
+                        <a href="/networks/edit_network/{{ net.id }}">Edit</a>
+                        <a href="/networks/remove_network/{{ net.id }}" style="color:#888;">Delete</a>
+                    </div>
+                </details>
+            </div>
+
+            {% if net.logo %}
+                <img src="{{ net.logo }}" class="logo" alt="{{ net.name }}">
+            {% else %}
+                <div style="font-size: 30px;">🌐</div>
+            {% endif %}
+
+            <h3>{{ net.name }}</h3>
+            <div class="stats">
+                Accounts: {{ net.accounts_count }}<br>
+                Posts: {{ net.posts_count }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="form-section">
+    <form method="post" action="/networks/sync_accounts">
+        <button type="submit">Sync networks Google Sheets</button>
+    </form>
+
+    <form method="post" action="/networks/add_network">
+        <input type="text" name="name" placeholder="New network name" required>
+        <input type="text" name="domain" placeholder="e.g. instagram.com" required>
+        <button type="submit">Add Network</button>
+    </form>
+</div>
+</body>
+</html>

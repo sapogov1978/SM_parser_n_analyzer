@@ -29,7 +29,7 @@ def show_networks(request: Request):
             "logo": logo
         })
 
-    return templates.TemplateResponse("dashboard.html", {"request": request, "networks": network_data})
+    return templates.TemplateResponse("networks.html", {"request": request, "networks": network_data})
 
 
 @router.post("/remove_network")

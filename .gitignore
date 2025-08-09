@@ -15,10 +15,12 @@ __pycache__/
 venv/
 env/
 .venv/
+backend/venv/
 
 # IDE/Editor files
 .vscode/
 .idea/
+backend/.idea/
 
 # Logs
 *.log
