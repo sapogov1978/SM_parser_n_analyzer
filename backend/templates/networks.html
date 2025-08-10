@@ -3,6 +3,7 @@
 <head>
     <title>Networks</title>
     <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/modal.css">
 </head>
 <body>
 <h2>Networks</h2>
@@ -14,8 +15,12 @@
                 <details>
                     <summary title="Actions">⋮</summary>
                     <div class="dropdown">
-                        <a href="/networks/edit_network/{{ net.id }}">Edit</a>
-                        <a href="/networks/remove_network/{{ net.id }}" style="color:#888;">Delete</a>
+                        <a href="#" onclick="openEditModal({{ net.id }}); return false;">Edit</a>
+                        <form method="post" action="/networks/remove_network" style="display: inline;"
+                              onsubmit="return confirm('Are you sure you want to delete this network?')">
+                            <input type="hidden" name="network_id" value="{{ net.id }}">
+                            <button type="submit" style="background: none; border: none; color: #888; cursor: pointer; text-decoration: underline;">Delete</button>
+                        </form>
                     </div>
                 </details>
             </div>
@@ -44,8 +49,8 @@
                 <details>
                     <summary title="Actions">⋮</summary>
                     <div class="dropdown">
-                        <a href="/networks/edit_network/{{ net.id }}">Edit</a>
-                        <a href="/networks/remove_network/{{ net.id }}" style="color:#888;">Delete</a>
+                        <a href="#" onclick="openEditModal({{ net.id }}); return false;">Edit</a>
+                        <span style="color: #ccc;">Delete (disabled)</span>
                     </div>
                 </details>
             </div>
@@ -65,16 +70,32 @@
     {% endfor %}
 </div>
 
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h3>Edit Network</h3>
+        <form method="post" action="/networks/edit_network">
+            <input type="hidden" id="edit_network_id" name="network_id">
+            <input type="text" id="edit_network_name" name="network_name" placeholder="Network name" required>
+            <input type="text" id="edit_domain" name="domain" placeholder="e.g. instagram.com" required>
+            <button type="submit">Update Network</button>
+        </form>
+    </div>
+</div>
+
 <div class="form-section">
     <form method="post" action="/networks/sync_accounts">
         <button type="submit">Sync networks Google Sheets</button>
     </form>
 
     <form method="post" action="/networks/add_network">
-        <input type="text" name="name" placeholder="New network name" required>
+        <input type="text" name="network_name" placeholder="New network name" required>
         <input type="text" name="domain" placeholder="e.g. instagram.com" required>
         <button type="submit">Add Network</button>
     </form>
 </div>
+
+<script src="../static/js/networks_ops.js"></script>
+
 </body>
 </html>

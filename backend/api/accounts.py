@@ -9,6 +9,13 @@ from api.api_globals import templates, BLACKLIST_PERCENTAGE
 
 router = APIRouter(prefix="/accounts", tags=["Accounts"])
 
+@router.post("/sync_accounts")
+def manual_sync():
+    try:
+        sync_accounts_from_google_sheets()
+    except Exception:
+        logger.exception("Manual sync failed")
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 @router.get("/network/{network_id}", response_class=HTMLResponse)
 def show_accounts_for_network(request: Request, network_id: int):
     with SessionLocal() as db:
