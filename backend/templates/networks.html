@@ -10,7 +10,7 @@
 
 <div class="cards">
     {% for net in networks if net.name != "other" %}
-        <div class="card" onclick="window.location.href='/networks/network/{{ net.id }}'">
+        <div class="card" onclick="window.location.href='/networks/{{ net.id }}/accounts'">
             <div class="actions" onclick="event.stopPropagation()">
                 <details>
                     <summary title="Actions">⋮</summary>
@@ -44,7 +44,7 @@
 
 <div class="cards">
     {% for net in networks if net.name == "other" %}
-        <div class="card" onclick="window.location.href='/networks/network/{{ net.id }}'">
+        <div class="card" onclick="window.location.href='/networks/{{ net.id }}/accounts'">
             <div class="actions" onclick="event.stopPropagation()">
                 <details>
                     <summary title="Actions">⋮</summary>
@@ -84,7 +84,7 @@
 </div>
 
 <div class="form-section">
-    <form method="post" action="/networks/sync_accounts">
+    <form method="post" action="/sync_accounts">
         <button type="submit">Sync networks Google Sheets</button>
     </form>
 

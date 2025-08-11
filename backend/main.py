@@ -1,14 +1,16 @@
-from datetime import datetime, timedelta
+import os
 import asyncio
-from fastapi import FastAPI
+
+from datetime import datetime, timedelta
+from fastapi import FastAPI, status
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
-import os
 
 from db.db import init_db, wait_for_db
+from api import networks, accounts, posts, posts_utl, parser
+from api.accounts_utl import sync_accounts_from_google_sheets
 from utl.logging import logger
-from api import networks, accounts, posts, networks_utl, posts_utl, parser
 
 
 async def nightly_sync_task():
@@ -20,7 +22,7 @@ async def nightly_sync_task():
 
         try:
             logger.info("🌙 Daily tasks started")
-            await asyncio.to_thread(networks_utl.sync_accounts_from_google_sheets)
+            await asyncio.to_thread(sync_accounts_from_google_sheets)
             await posts_utl.parse_instagram_posts()
             logger.info("✅ Daily tasks completed")
         except Exception:
@@ -58,7 +60,16 @@ app.include_router(parser.router)
 
 @app.get("/")
 async def root():
-    return RedirectResponse(url="/networks/")
+    return RedirectResponse(url="/networks/", status_code=status.HTTP_303_SEE_OTHER)
+
+@app.post("/sync_accounts")
+def manual_sync():
+    try:
+        sync_accounts_from_google_sheets()
+    except Exception:
+        logger.exception("Manual sync failed")
+    return RedirectResponse(url="/networks/", status_code=status.HTTP_303_SEE_OTHER)
+
 
 # wait_for_db()
 # init_db()

@@ -10,7 +10,7 @@ from utl.logging import logger
 from api.api_globals import templates, LOGOS
 from api.networks_utl import get_or_create_other
 
-router = APIRouter(prefix="/networks", tags=["Networks"])
+router = APIRouter(prefix="/networks")
 
 @router.get("/", response_class=HTMLResponse)
 def show_networks(request: Request):
