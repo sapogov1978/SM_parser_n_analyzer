@@ -2,18 +2,14 @@
 <html lang="en">
 <head>
     <title>{{ network.name }} — Accounts</title>
-    <style>
-        body { font-family: sans-serif; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        tr.blacklisted { background-color: #fdd; }
-    </style>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/modal.css">
 </head>
 <body>
     <h1>Accounts for {{ network.name }}</h1>
     <br>
     <div style="text-align: center;">
-        <form method="post" action="/app/parser/sync_posts/{{ network.id }}">
+        <form method="post" action="/parser/sync_posts/{{ network.id }}">
             <button type="submit">Manual sync all posts on all accounts</button>
         </form>
     </div>
@@ -26,6 +22,7 @@
                 <th>Posts Count</th>
                 <th>Avg Score</th>
                 <th>Blacklisted</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -33,12 +30,34 @@
             <tr class="{{ 'blacklisted' if item.account.blacklisted else '' }}">
                 <td><a href="{{ item.account.url }}" target="_blank">{{ item.account.url }}</a></td>
                 <td>{{ item.account.followers }}</td>
-                <td>{{ item.posts|length }}</td>
+                <td>{{ item.posts|length if item.posts is defined else item.posts_count }}</td>
                 <td>{{ ('%.4f' % item.score) if item.score is not none else '0.0000' }}</td>
-                <td>{{ item.account.blacklisted }}</td>
+                <td>{{ 'Yes' if item.account.blacklisted else 'No' }}</td>
+                <td>
+                    <button type="button" class="edit-btn" onclick="openEditModal({{ item.account.id }})">Edit</button>
+                    <form method="post" action="/networks/{{ network.id }}/accounts/{{ item.account.id }}/delete" style="display:inline" onsubmit="return confirm('Delete this account?');">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+
+    <!-- Modal HTML -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h3>Edit Account</h3>
+            <form method="post" action="/networks/{{ network.id }}/accounts/edit">
+                <input type="hidden" id="edit_account_id" name="account_id" value="">
+                <label for="edit_url">URL:</label>
+                <input type="text" id="edit_url" name="url" required>
+                <button type="submit">Update Account</button>
+            </form>
+        </div>
+    </div>
+
+<script src="../static/js/networks_ops.js"></script>
 </body>
 </html>

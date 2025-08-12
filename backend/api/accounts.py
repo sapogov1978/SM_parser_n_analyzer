@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
-from sqlalchemy.orm import Session
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Request, Form, status, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy import func
 
 from db.db import SessionLocal
-from db.models import Network, Account
-from db.db import get_db
+from db.models import Network, Account, Post
 from api.api_globals import templates
 
 router = APIRouter(prefix="/networks/{network_id}/accounts")
@@ -16,44 +15,51 @@ def show_accounts_for_network(request: Request, network_id: int):
         if not network:
             return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
 
-        accounts = db.query(Account).filter(Account.network_id == network.id).order_by(Account.score.desc()).all()
+        accounts = (
+            db.query(Account)
+            .filter(Account.network_id == network.id)
+            .order_by(Account.score.desc().nullslast())
+            .all()
+        )
 
-        account_stats = [{
+        acc_ids = [a.id for a in accounts]
+        post_counts = dict(
+            db.query(Post.account_id, func.count(Post.id))
+              .filter(Post.account_id.in_(acc_ids))
+              .group_by(Post.account_id)
+              .all()
+        )
+
+        view_model = [{
             "account": acc,
-            "score": acc.score if hasattr(acc, "score") else 0,
-            "blacklisted": getattr(acc, "blacklisted", False)
+            "posts_count": post_counts.get(acc.id, 0),
         } for acc in accounts]
 
-        return templates.TemplateResponse("accounts.html", {
-            "request": request,
-            "network": network,
-            "accounts": account_stats
-        })
+        return templates.TemplateResponse(
+            "accounts.html",
+            {"request": request, "network": network, "accounts": view_model}
+        )
 
-@router.get("/for-parsing")
-def get_accounts_for_parsing(db: Session = Depends(get_db)):
-    accs = db.query(Account).filter(
-        Account.network.has(name="instagram")
-    ).all()
-    return [{
-        "id": a.id,
-        "url": a.url,
-        "network_id": a.network_id
-    } for a in accs]
-
-@router.post("/{account_id}/followers")
-def update_followers(account_id: int, payload: dict, db: Session = Depends(get_db)):
-    acc = db.query(Account).get(account_id)
-    if not acc:
-        raise HTTPException(status_code=404)
-    acc.followers = payload["followers"]
-    db.commit()
-    return {"status": "ok"}
-
-@router.post("/{account_id}/parsed")
-def mark_account_parsed(account_id: int, db: Session = Depends(get_db)):
-    acc = db.query(Account).get(account_id)
-    if acc:
-        acc.just_added = False
+@router.post("/edit")
+def edit_account(
+    network_id: int,
+    account_id: int = Form(...),
+    url: str = Form(...),
+):
+    with SessionLocal() as db:
+        account = db.query(Account).filter(Account.id == account_id, Account.network_id == network_id).first()
+        if not account:
+            raise HTTPException(status_code=404, detail="Account not found")
+        account.url = url
         db.commit()
-    return {"status": "ok"}
+    return RedirectResponse(url=f"/networks/{network_id}/accounts", status_code=status.HTTP_303_SEE_OTHER)
+
+@router.post("/{account_id}/delete")
+def delete_account(network_id: int, account_id: int):
+    with SessionLocal() as db:
+        account = db.query(Account).filter(Account.id == account_id, Account.network_id == network_id).first()
+        if not account:
+            raise HTTPException(status_code=404, detail="Account not found")
+        db.delete(account)
+        db.commit()
+    return RedirectResponse(url=f"/networks/{network_id}/accounts", status_code=status.HTTP_303_SEE_OTHER)

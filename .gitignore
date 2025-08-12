@@ -37,3 +37,4 @@ Thumbs.db
 
 # Local data storage
 data/
+backend/parser/node_modules/

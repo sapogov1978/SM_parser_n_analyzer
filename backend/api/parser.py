@@ -8,7 +8,7 @@ from db.models import Network, Account
 from db.db import get_db
 from utl.logging import logger
 
-router = APIRouter(prefix="/parser", tags=["Parser"])
+router = APIRouter(prefix="/parser")
 
 async def run_parser_script(network_name: str, accounts_data: list):
     script_map = {
