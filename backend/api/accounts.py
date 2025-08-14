@@ -33,6 +33,7 @@ def show_accounts_for_network(request: Request, network_id: int):
         view_model = [{
             "account": acc,
             "posts_count": post_counts.get(acc.id, 0),
+            "score": acc.score,  # добавьте это
         } for acc in accounts]
 
         return templates.TemplateResponse(

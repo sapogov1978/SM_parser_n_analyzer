@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <title>{{ network.name }} — Accounts</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
-    <link rel="stylesheet" href="../static/css/modal.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/modal.css">
+    <script defer src="/static/js/networks_ops.js"></script>
 </head>
 <body>
     <h1>Accounts for {{ network.name }}</h1>
@@ -34,7 +35,7 @@
                 <td>{{ ('%.4f' % item.score) if item.score is not none else '0.0000' }}</td>
                 <td>{{ 'Yes' if item.account.blacklisted else 'No' }}</td>
                 <td>
-                    <button type="button" class="edit-btn" onclick="openEditModal({{ item.account.id }})">Edit</button>
+                    <button type="button" class="edit-btn" onclick="openAccountEditModal({{ item.account.id }}, '{{ item.account.url|e }}')">Edit</button>
                     <form method="post" action="/networks/{{ network.id }}/accounts/{{ item.account.id }}/delete" style="display:inline" onsubmit="return confirm('Delete this account?');">
                         <button type="submit">Delete</button>
                     </form>
@@ -58,6 +59,5 @@
         </div>
     </div>
 
-<script src="../static/js/networks_ops.js"></script>
 </body>
 </html>

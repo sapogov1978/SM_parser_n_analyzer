@@ -5,9 +5,103 @@ body {
     padding: 20px;
 }
 
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
 h2 {
     text-align: center;
     margin-bottom: 20px;
+}
+
+/* Стили для таблицы */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Стили для заблокированных аккаунтов */
+.blacklisted {
+    background-color: #ffe6e6 !important;
+}
+
+.blacklisted:hover {
+    background-color: #ffcccc !important;
+}
+
+/* Стили для кнопок в таблице */
+td button {
+    padding: 6px 12px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #218838;
+}
+
+td button[type="submit"] {
+    background-color: #dc3545;
+    color: white;
+}
+
+td button[type="submit"]:hover {
+    background-color: #c82333;
+}
+
+/* Стили для ссылок в таблице */
+td a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+/* Стили для форм в строках таблицы */
+td form {
+    display: inline;
+    margin: 0;
 }
 
 .cards {

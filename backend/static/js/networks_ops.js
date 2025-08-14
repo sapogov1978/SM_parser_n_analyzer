@@ -8,6 +8,8 @@ class NetworkManager {
     init() {
         // Set up modal event listeners
         this.setupModalEventListeners();
+        // Set up form validation
+        this.setupFormValidation();
     }
 
     setupModalEventListeners() {
@@ -30,6 +32,39 @@ class NetworkManager {
         if (modalContent) {
             modalContent.addEventListener('click', (event) => {
                 event.stopPropagation();
+            });
+        }
+    }
+
+    setupFormValidation() {
+        // Set up form validation for account editing
+        const editForm = this.modal.querySelector('form');
+        if (editForm) {
+            editForm.addEventListener('submit', (event) => {
+                const urlField = document.getElementById('edit_url');
+                if (urlField) {
+                    const url = urlField.value.trim();
+
+                    // Simple URL validation
+                    if (!url) {
+                        event.preventDefault();
+                        this.showError('Please enter a URL');
+                        urlField.focus();
+                        return false;
+                    }
+
+                    // Auto-add https:// if missing protocol
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        const confirmAdd = confirm('URL does not start with http:// or https://. Add https:// automatically?');
+                        if (confirmAdd) {
+                            urlField.value = 'https://' + url;
+                        } else {
+                            event.preventDefault();
+                            urlField.focus();
+                            return false;
+                        }
+                    }
+                }
             });
         }
     }
@@ -74,6 +109,36 @@ class NetworkManager {
         }
 
         return true; // Return true to indicate success
+    }
+
+    /**
+     * Opens account edit modal (for account pages)
+     * @param {number} accountId - Account ID
+     * @param {string} currentUrl - Current account URL
+     */
+    openAccountEditModal(accountId, currentUrl = '') {
+        // Populate account form fields
+        const accountIdField = document.getElementById('edit_account_id');
+        const urlField = document.getElementById('edit_url');
+
+        if (accountIdField) {
+            accountIdField.value = accountId;
+        }
+
+        if (urlField) {
+            urlField.value = currentUrl;
+        }
+
+        // Show modal
+        this.modal.style.display = 'block';
+
+        // Focus on URL field for editing convenience
+        if (urlField) {
+            setTimeout(() => {
+                urlField.focus();
+                urlField.select();
+            }, 100);
+        }
     }
 
     /**
@@ -122,6 +187,15 @@ class NetworkManager {
         if (form) {
             form.reset();
         }
+
+        // Clear specific fields that might not be in the form
+        const fieldsTosClear = ['edit_account_id', 'edit_url'];
+        fieldsTosClear.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = '';
+            }
+        });
     }
 
     /**
@@ -132,7 +206,11 @@ class NetworkManager {
         const submitButton = this.modal.querySelector('button[type="submit"]');
         if (submitButton) {
             submitButton.disabled = show;
-            submitButton.textContent = show ? 'Loading...' : 'Update Network';
+            const originalText = submitButton.getAttribute('data-original-text') || submitButton.textContent;
+            if (!submitButton.getAttribute('data-original-text')) {
+                submitButton.setAttribute('data-original-text', originalText);
+            }
+            submitButton.textContent = show ? 'Loading...' : originalText;
         }
     }
 
@@ -153,13 +231,24 @@ document.addEventListener('DOMContentLoaded', () => {
     networkManager = new NetworkManager();
 });
 
-// Global functions for use in HTML
+// Global functions for use in HTML - Network operations
 async function openEditModal(networkId) {
     if (networkManager) {
         try {
             await networkManager.openEditModal(networkId);
         } catch (error) {
             console.error('Failed to open edit modal:', error);
+        }
+    }
+}
+
+// Global functions for use in HTML - Account operations
+function openAccountEditModal(accountId, currentUrl = '') {
+    if (networkManager) {
+        try {
+            networkManager.openAccountEditModal(accountId, currentUrl);
+        } catch (error) {
+            console.error('Failed to open account edit modal:', error);
         }
     }
 }
