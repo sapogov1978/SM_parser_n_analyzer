@@ -5,6 +5,8 @@ services:
     restart: always
     environment:
       - DATABASE_URL=postgresql+psycopg2://user:password@db:5432/parserdb
+      - INSTAGRAM_USERNAME=${INSTAGRAM_USERNAME}
+      - INSTAGRAM_PASSWORD=${INSTAGRAM_PASSWORD}
     volumes:
       - ./logs:/app/logs 
     ports:
