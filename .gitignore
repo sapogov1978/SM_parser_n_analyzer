@@ -16,6 +16,7 @@ venv/
 env/
 .venv/
 backend/venv/
+.env
 
 # IDE/Editor files
 .vscode/
